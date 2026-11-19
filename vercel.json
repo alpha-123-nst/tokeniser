@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "api/embed.py", "use": "@vercel/python" }
+  ],
+  "routes": [
+    { "src": "/api/embed", "dest": "api/embed.py" },
+    { "src": "/(.*)", "dest": "/static/$1" }
+  ]
+}

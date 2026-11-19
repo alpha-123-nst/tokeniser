@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Tokeniser & Embedding Playground</title>
+<style>
+  body {font-family: Arial, sans-serif; margin: 2rem;}
+  textarea {width: 100%; height: 120px;}
+  button {margin-top: 0.5rem; padding: 0.5rem 1rem;}
+  pre {background:#f0f0f0; padding:0.5rem; overflow:auto;}
+</style>
+</head>
+<body>
+<h1>Tokeniser & Embedding Playground</h1>
+<p>Enter text, click <strong>Run</strong>, and see token IDs and a short preview of the embedding vector.</p>
+<textarea id="input" placeholder="Type something...">Hello world!</textarea><br/>
+<button id="run">Run</button>
+<h2>Result</h2>
+<pre id="output">Waiting for input...</pre>
+<script>
+async function run(){
+  const txt = document.getElementById('input').value;
+  const res = await fetch('/api/embed', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({text: txt})
+  });
+  if(!res.ok){
+    document.getElementById('output').textContent = 'Error: '+res.statusText;
+    return;
+  }
+  const data = await res.json();
+  const preview = data.embedding.slice(0,10).map(v=>v.toFixed(4)).join(', ')+' …';
+  document.getElementById('output').textContent = `Tokens: ${data.tokens.join(', ')}\nEmbedding (first 10): ${preview}`;
+}
+document.getElementById('run').addEventListener('click', run);
+</script>
+</body>
+</html>
